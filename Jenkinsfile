@@ -1,11 +1,11 @@
 pipeline {
     agent any
     environment {
-        SERVICE = 'account' // Name of the service being built
-        NAME = "humbertosandmann/${env.SERVICE}" // Docker Hub repository name
+        SERVICE = 'account'
+        NAME = "projetomicro/${env.SERVICE}"
     }
     stages {
-        stage('Dependecies') {
+        stage('Dependencies') {
             steps {
                 build job: 'account', wait: true
             }
@@ -27,6 +27,11 @@ pipeline {
                     sh "docker buildx build --platform=linux/arm64,linux/amd64 --push --tag ${env.NAME}:latest --tag ${env.NAME}:${env.BUILD_ID} -f Dockerfile ."
                     sh "docker buildx rm --force multi-platform-builder-${env.SERVICE}"
                 }
+            }
+        }
+        stage('Deploy to K8s') {
+            steps {
+                sh 'kubectl apply -f k8s/k8s.yaml'
             }
         }
     }
