@@ -28,6 +28,11 @@ metadata:
     app: account
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   selector:
     matchLabels:
       app: account
@@ -38,7 +43,7 @@ spec:
     spec:
       containers:
         - name: account
-          image: projetomicro/account:latest
+          image: gunicacio/account:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -49,11 +54,11 @@ spec:
                 name: account-secrets
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "100m"
+              memory: "128Mi"
+              cpu: "50m"
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: "384Mi"
+              cpu: "300m"
 ---
 apiVersion: v1
 kind: Service
